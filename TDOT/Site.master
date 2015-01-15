@@ -1,0 +1,148 @@
+﻿<%@ Master EnableViewState="false" Language="C#" AutoEventWireup="true" CodeFile="Site.master.cs" Inherits="SiteMaster" %>
+<!DOCTYPE html>
+<html>
+<head runat="server">
+    <title>Environmental Mitigation Tracker</title>
+	<link rel="stylesheet" href="~/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="~/css/jquery.qtip.min.css" type="text/css" />
+	<link rel="stylesheet" href="~/css/smoothness/jquery-ui-1.8.16.custom.css" type="text/css" />
+    <link rel="stylesheet" href="~/css/sexybuttons.css" type="text/css" />
+	<asp:ContentPlaceHolder ID="HeadCss" runat="server"></asp:ContentPlaceHolder>
+	<script type="text/javascript" src="<%=ResolveUrl("~/js/jquery.1.7.1.min.js") %>"></script>
+	<script type="text/javascript" src="<%=ResolveUrl("~/js/jquery-ui-1.8.16.custom.min.js") %>"></script>
+	<script type="text/javascript" src="<%=ResolveUrl("~/js/jquery.dataTables.min.js") %>"></script>
+	<script type="text/javascript" src="<%=ResolveUrl("~/js/jquery.qtip.min.js") %>"></script>
+	<script type="text/javascript" src="<%=ResolveUrl("~/js/jquery.masonry.min.js") %>"></script>
+	<script type="text/javascript" src="<%=ResolveUrl("~/js/jquery.fileupload.js") %>"></script>
+    <script type="text/javascript" src="<%=ResolveUrl("~/js/jquery.iframe-transport.js") %>"></script>
+	<script type="text/javascript" src="<%=ResolveUrl("~/js/superfish.js") %>"></script>
+	<script type="text/javascript" src="<%=ResolveUrl("~/js/supersubs.js") %>"></script>
+	<script type="text/javascript" src="<%=ResolveUrl("~/js/swfobject.js") %>"></script>
+	<script type="text/javascript" src="<%=ResolveUrl("~/js/DocumentManager.js") %>"></script>
+    <script type="text/javascript" src="<%=ResolveUrl("~/js/file-uploader.js") %>"></script>
+	<script type="text/javascript" src="<%=ResolveUrl("~/js/FormValidator.js") %>"></script>
+	<script type="text/javascript" src="<%=ResolveUrl("~/js/main.js") %>"></script>
+    <asp:ContentPlaceHolder ID="HeadScripts" runat="server"></asp:ContentPlaceHolder>
+</head>
+<body>
+	<form runat="server">
+        <div id="header-wrap">
+            <div id="header">
+                <div class="float-right">
+				    <div class="loginDisplay right-text">
+					    <asp:LoginView ID="HeadLoginView" runat="server" EnableViewState="false">
+						    <AnonymousTemplate>
+							    [ <a href="~/Account/Login.aspx" ID="HeadLoginStatus" runat="server">Log In</a> ]
+						    </AnonymousTemplate>
+						    <LoggedInTemplate>
+							    Welcome <strong><asp:LoginName ID="HeadLoginName" runat="server" /></strong>
+							    [ <a href="<%=ResolveUrl("~/Account/Logout.aspx") %>"title="Log out of the TDOT File Portal">Log Out</a> ]
+						    </LoggedInTemplate>
+					    </asp:LoginView>
+					    <br />
+					    <%
+					    if(HttpContext.Current.User.Identity.IsAuthenticated)
+					    {
+						    %>
+						    <a href="#" class="change-password" title="Change Your Password">Change Password</a> |
+						    <%
+					    }
+					    %>
+					    <a href="mailto:marc.pearson@stantec.com;katie.franke@stantec.com;?subject=TDOT Portal Help" title="Contact the Site Administrators">Help</a>
+					    <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server"/>
+				    </div>
+			    </div>
+			    <div id="title-placeholder">
+                    <img src="<%=ResolveUrl("~/images/TNLogo2.gif")%>" class="float-left" alt="Tennessee" />
+				    <h1 class="float-left">Environmental Mitigation Tracker</h1>
+			    </div>
+		    </div>
+        </div>
+        <div class="clearfix"></div>
+		<div id="wrap">
+            <div id="header-nav">
+				<div class="row">
+					<div class="column grid-20">
+						<%
+						if(HttpContext.Current.User.Identity.IsAuthenticated)
+						{
+							%>
+							<ul class="sf-menu">
+                                <li><a href="<%=ResolveUrl("~/Default.aspx") %>" title="Home">Home</a></li>
+								<%
+								if(HttpContext.Current.User.IsInRole("Administrator"))
+								{
+									%>
+									<li><a href="<%=ResolveUrl("~/Admin/ReferenceAdmin.aspx") %>" title="Reference Management">Reference Admin</a></li>
+									<li><a href="<%=ResolveUrl("~/Admin/UserAdmin.aspx") %>" title="User Management">User Admin</a></li>
+									<%
+								}
+								%>
+							</ul>
+							<%
+						}
+						%>
+					</div>
+				</div>					
+			</div>
+			<div id="content">
+				<asp:ContentPlaceHolder ID="Body" runat="server"/>
+			</div>
+			<div id="footer">
+				<div class="row">
+					<div class="column grid-20 center-text">
+                        <img src="<%=ResolveUrl("~/images/stantec_horizontal_logo_dark2.png") %>" alt="Stantec" class="w200 mt20 padv10" title="Stantec" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+	<div class="hidden" id="hidden-data">
+		<asp:ContentPlaceHolder ID="HiddenData" runat="server"></asp:ContentPlaceHolder>
+        <input type="hidden" id="user-is-admin" value="<%:HttpContext.Current.User.IsInRole("Administrator") ? "1" : "0" %>" />
+		<div id="base-dialog">
+			<div class="dialog-header"></div>
+			<div class="dialog-content"></div>
+			<div class="dialog-footer"></div>
+		</div>
+		<%
+		if(HttpContext.Current.User.Identity.IsAuthenticated)
+		{
+			%>
+			<div id="change-password-dialog" title="Change Your Password">
+				<div class="dialog-header">
+					<h2>Change Your Password</h2>
+					<p>
+						Use the form below to change your password
+					</p>
+				</div>
+				<div class="dialog-content">
+					<div class="question">
+						<label for="old-password">Old Password</label>
+						<div class="example-text">Enter a memorable and meaningful username.</div>
+						<input type="password" id="old-password" name="old_password" class="required checkname w200" placeholder="Old Password" />
+						<div class="error-message-container redtext"></div>
+					</div>
+					<div class="question">
+						<label for="new-password">New Password</label>
+						<div class="example-text">Enter a password at least <%= Membership.MinRequiredPasswordLength %> characters in length.</div>
+						<input type="password" id="new-password" name="new_password" class="required checktext w200" placeholder="New Password" />
+						<div class="error-message-container redtext"></div>
+					</div>
+					<div class="question">
+						<label for="confirm-password">Confirm Password</label>
+						<div class="example-text">Please confirm your new password.</div>
+						<input type="password" id="confirm-password" name="confirm_password" class="required checktext w200" placeholder="Confirm Password" />
+						<div class="error-message-container redtext"></div>
+					</div>
+				</div>
+				<div class="dialog-footer"></div>
+			</div>
+			<%
+		}
+		%>
+		
+	</div>
+	<asp:ContentPlaceHolder ID="FooterScripts" runat="server"></asp:ContentPlaceHolder>
+</body>
+</html>
